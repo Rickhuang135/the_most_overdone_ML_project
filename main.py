@@ -17,40 +17,41 @@ def activation(n_by_1, alpha=100):
 
 def process_picture(image28x28, Label):
     global parameters_in_to_1, parameters_1_to_2, parameters_2_to_out
-    k = 1/400
+    k = 1/2
     alpha = 100
-    input_layer784 = np.array(image28x28).ravel()
-    first_layer = activation(parameters_in_to_1@input_layer784, alpha)
+    input_layer = np.array(image28x28).ravel()
+    first_layer = activation(parameters_in_to_1@input_layer, alpha)
     second_layer = activation(parameters_1_to_2@first_layer, alpha)
     O = parameters_2_to_out@second_layer
     e_powered = np.e**(O*k)
     error=np.array([ 1 if x==Label else 0 for x in range(10)])
-    C = (e_powered/e_powered.sum()-error)**2
+    result = e_powered/e_powered.sum()
+    C = (result-error)**2
     print(C.sum())
     dC_dO = k*(np.e**(2*O*k)-np.e**(O*k)*e_powered.sum())/(e_powered.sum())**2 * 2*(e_powered/e_powered.sum()-error)
     gradient_2_to_out =[]
-    for row, dC_dOk in zip(parameters_2_to_out, dC_dO):
-        gradient_2_to_out.append(row*dC_dOk)
+    for dC_dOk in dC_dO:
+        gradient_2_to_out.append(second_layer*dC_dOk)
     gradient_2_to_out = np.array(gradient_2_to_out)
 
     gradient_1_to_2 = []
-    for row, av in zip(parameters_1_to_2, parameters_2_to_out.T):
-        dBv_dvM= (alpha/np.pi) / ((alpha*(row.sum()-0.5))**2 + 1) * (second_layer)
+    for sumv, av in zip(parameters_1_to_2@first_layer, parameters_2_to_out.T):
+        dBv_dvM= (alpha/np.pi) / ((alpha*(sumv-0.5))**2 + 1) * (first_layer)
         gradient_1_to_2.append(dBv_dvM*(dC_dO*av).sum())
     gradient_1_to_2 = np.array(gradient_1_to_2)
     
     gradient_in_to_1 = []
-    for row, mv in zip(parameters_in_to_1, parameters_1_to_2.T):
-        dCh_dhL= (alpha/np.pi) / ((alpha*(row.sum()-0.5))**2 + 1) * (first_layer)
+    for sumh, mv in zip(parameters_in_to_1@input_layer, parameters_1_to_2.T):
+        dCh_dhL= (alpha/np.pi) / ((alpha*(sumh-0.5))**2 + 1) * (input_layer)
         gradient_in_to_1.append(dCh_dhL*(gradient_1_to_2*mv).sum())
     gradient_in_to_1 = np.array(gradient_in_to_1)
 
-    step_size= 0.01
-    gradient_in_to_1-=gradient_in_to_1*step_size
+    step_size= -0.1
+    parameters_in_to_1-=gradient_in_to_1*step_size
     parameters_1_to_2-=gradient_1_to_2*step_size
     parameters_2_to_out-=gradient_2_to_out*step_size
 
-
+    return result.round(2)
 
     
 
@@ -58,6 +59,10 @@ def loop(its: int):
     pictures= extract_images("./data/train-images-idx3-ubyte/train-images.idx3-ubyte",its)
     labels = extract_label("./data/train-labels-idx1-ubyte/train-labels.idx1-ubyte", its)
     for picture, label in zip(pictures, labels):
-        process_picture(picture, label)
+        process_picture(pictures[0], labels[0])
+    print(process_picture(pictures[0], labels[0]))
 
-loop(500)
+old_p = parameters_in_to_1
+loop(200)
+print(parameters_in_to_1)
+print(old_p)
