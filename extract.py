@@ -1,6 +1,8 @@
 import struct
 import asyncio
 import png
+import gzip
+import numpy as np
 
 def extract_images(file_path, number =None):
     with open(file_path, 'rb') as file:
@@ -23,6 +25,13 @@ def extract_images(file_path, number =None):
         
         return images
     
+def extract_label(filepath, number=None):
+    with open(filepath, 'rb') as f:
+        magic, num_labels = struct.unpack(">II", f.read(8))  # Read header
+        if number==None:
+            number = num_labels
+        labels = np.frombuffer(f.read(number), dtype=np.uint8 )    # Read labels
+    return labels
 
 def to_png(read_path, write_path, number=None):
     with open(read_path, 'rb') as file:
