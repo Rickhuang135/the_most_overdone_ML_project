@@ -1,6 +1,6 @@
 import struct
 import asyncio
-import png
+# import png
 import gzip
 import numpy as np
 

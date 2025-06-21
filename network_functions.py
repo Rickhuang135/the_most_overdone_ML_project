@@ -39,6 +39,6 @@ def square_diff(O, error):
     return C, cost_wrt_outputs
 
 def cross_entropy(O, error):
-    C = (-error*np.log(O)).sum()
+    C = (-error*np.log(O+1e-9)).sum()
     cost_wrt_outputs = -error/(O)
     return C, cost_wrt_outputs
