@@ -23,7 +23,8 @@
           python312Packages.numpy
           python312Packages.matplotlib
           python312Packages.pandas
-	  python312Packages.cupy
+	        python312Packages.cupy
+          cudaPackages.cuda_nvrtc
           ]; 
         };
       }

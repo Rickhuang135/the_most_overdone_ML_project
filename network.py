@@ -71,10 +71,9 @@ class Network:
             dC_dlayers.append((parameters@activation_derivatives).T@dC_dlayers[-1])
             temp = np.array([dC_dlayers[-1]])
             gradients.append(temp.T@np.array([layer_previous]))
-        
+
         for index, gradient in enumerate(gradients[::-1]) :
             self.parameters[index] -= gradient * step_size
-
         for index, gradient in enumerate(dC_dlayers[::-1]):
             self.biases[index] -= gradient*step_size
 
