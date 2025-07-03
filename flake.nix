@@ -24,8 +24,11 @@
           python312Packages.matplotlib
           python312Packages.pandas
 	        python312Packages.cupy
-          cudaPackages.cuda_nvrtc
-          ]; 
+          cudatoolkit
+          ];    
+          shellHook = ''
+            export LD_LIBRARY_PATH=${pkgs.cudatoolkit}/lib:$LD_LIBRARY_PATH
+          '';
         };
       }
     );

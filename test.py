@@ -1,10 +1,7 @@
-# import cupy as cp
-
-# x_gpu = cp.array([1,2,3])
-# l2_gpu = cp.linalg.norm(x_gpu)
-
+import cupy as cp
 import numpy as np
-from network_functions import softmax
+from time import sleep
 
-test_array = np.array([[1,1,1],[2,2,2],[3,3,4]])
-print(test_array[-2:])
+x_cpu = np.array([1, 2, 3])
+x_gpu = cp.asarray(x_cpu)  # move the data to the current device.
+sleep(10)
